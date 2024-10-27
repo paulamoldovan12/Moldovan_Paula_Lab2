@@ -64,8 +64,8 @@ namespace Moldovan_Paula_Lab2.Pages.Books
 
             Book.BookCategories = newBook.BookCategories;
             _context.Book.Add(Book);
-                await _context.SaveChangesAsync();
-                return RedirectToPage("./Index");
+            await _context.SaveChangesAsync();
+            return RedirectToPage("./Index");
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Moldovan_Paula_Lab2.Data;
 using Moldovan_Paula_Lab2.Models;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Moldovan_Paula_Lab2.Pages.Books
 {
@@ -32,7 +33,9 @@ namespace Moldovan_Paula_Lab2.Pages.Books
 
             Book = await _context.Book
                 .Include(b => b.Publisher)
-                .Include(b => b.BookCategories).ThenInclude(b => b.Category)
+                .Include(b => b.Author)
+                .Include(b => b.BookCategories)
+                    .ThenInclude(b => b.Category)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
 
@@ -42,7 +45,6 @@ namespace Moldovan_Paula_Lab2.Pages.Books
             {
                 return NotFound();
             }
-            // Book = Book;
 
             PopulateAssignedCategoryData(_context, Book);
 
@@ -52,9 +54,15 @@ namespace Moldovan_Paula_Lab2.Pages.Books
                 FullName = x.LastName + " " + x.FirstName
             });
 
+            ViewData["AuthorID"] = new SelectList(authorList, "ID", "FullName");
+            ViewData["PublisherID"] = new SelectList(_context.Publisher, "ID", "PublisherName");
+            
+            return Page();
+            /*
+            Book = Book;
             ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID", "PublisherName");
             ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "ID", "FullName");
-            return Page();
+            */
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -93,9 +101,11 @@ namespace Moldovan_Paula_Lab2.Pages.Books
 
             var bookToUpdate = await _context.Book
                 .Include(i => i.Publisher)
+                .Include(i => i.Author)
                 .Include(i => i.BookCategories)
                     .ThenInclude(i => i.Category)
                 .FirstOrDefaultAsync(s => s.ID == id);
+
             if (bookToUpdate == null)
             {
                 return NotFound();
@@ -104,8 +114,8 @@ namespace Moldovan_Paula_Lab2.Pages.Books
             if (await TryUpdateModelAsync<Book>(
                bookToUpdate,
                "Book",
-               i => i.Title, i => i.Author,
-                i => i.Price, i => i.PublishingDate, i => i.PublisherID))
+               i => i.Title, i => i.AuthorID,
+               i => i.Price, i => i.PublishingDate, i => i.PublisherID))
             {
                 UpdateBookCategories(_context, selectedCategories, bookToUpdate);
                 await _context.SaveChangesAsync();
@@ -116,10 +126,11 @@ namespace Moldovan_Paula_Lab2.Pages.Books
             PopulateAssignedCategoryData(_context, bookToUpdate);
             return Page();
         }
-
+        /*
             private bool BookExists(int id)
         {
             return _context.Book.Any(e => e.ID == id);
         }
+        */
     }
 }
