@@ -29,6 +29,7 @@ namespace Moldovan_Paula_Lab2.Pages.Books
             }
 
             var book = await _context.Book.FirstOrDefaultAsync(m => m.ID == id);
+            
             if (book == null)
             {
                 return NotFound();
@@ -37,6 +38,7 @@ namespace Moldovan_Paula_Lab2.Pages.Books
             {
                 Book = book;
             }
+            
             return Page();
         }
     }
