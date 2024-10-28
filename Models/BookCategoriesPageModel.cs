@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿/*
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Moldovan_Paula_Lab2.Data;
+using Moldovan_Paula_Lab2.Models;
 
 namespace Moldovan_Paula_Lab2.Models
 {
@@ -11,7 +13,8 @@ namespace Moldovan_Paula_Lab2.Models
         {
             var allCategories = context.Category;
             var bookCategories = new HashSet<int>(
-                book.BookCategories.Select(c => c.CategoryID)); // AssignedCategoryDataList = new List<AssignedCategoryData>();
+                book.BookCategories.Select(c => c.CategoryID));
+            AssignedCategoryDataList = new List<AssignedCategoryData>();
 
             foreach (var cat in allCategories)
             {
@@ -33,7 +36,7 @@ namespace Moldovan_Paula_Lab2.Models
             }
 
             var selectedCategoriesHS = new HashSet<string>(selectedCategories);
-            var bookCategories = new HashSet<int>(bookToUpdate.BookCategories.Select(c => c.Category.ID));
+            var bookCategories = new HashSet<int>(bookToUpdate.BookCategories.Select(c => c.CategoryID));
 
             foreach (var cat in context.Category)
             {
@@ -57,6 +60,70 @@ namespace Moldovan_Paula_Lab2.Models
                             = bookToUpdate
                                 .BookCategories
                                 .SingleOrDefault(i => i.CategoryID == cat.ID);
+                        context.Remove(bookToRemove);
+                    }
+                }
+            }
+        }
+    }
+}
+*/
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Moldovan_Paula_Lab2.Data;
+using Moldovan_Paula_Lab2.Models;
+
+namespace Moldovan_Paula_Lab2.Models
+{
+    public class BookCategoriesPageModel : PageModel
+    {
+        public List<AssignedCategoryData> AssignedCategoryDataList;
+        public void PopulateAssignedCategoryData(Moldovan_Paula_Lab2Context context, Book book)
+        {
+            var allCategories = context.Category;
+            var bookCategories = new HashSet<int>(
+                book.BookCategories.Select(c => c.CategoryID));
+            AssignedCategoryDataList = new List<AssignedCategoryData>();
+            foreach (var cat in allCategories)
+            {
+                AssignedCategoryDataList.Add(new AssignedCategoryData
+                {
+                    CategoryID = cat.ID,
+                    Name = cat.CategoryName,
+                    Assigned = bookCategories.Contains(cat.ID)
+                });
+            }
+        }
+
+        public void UpdateBookCategories(Moldovan_Paula_Lab2Context context, string[] selectedCategories, Book bookToUpdate)
+        {
+            if (selectedCategories == null)
+            {
+                bookToUpdate.BookCategories = new List<BookCategory>();
+                return;
+            }
+            var selectedCategoriesHS = new HashSet<string>(selectedCategories);
+            var bookCategories = new HashSet<int>(bookToUpdate.BookCategories.Select(c => c.CategoryID));
+            foreach (var cat in context.Category)
+            {
+                if (selectedCategoriesHS.Contains(cat.ID.ToString()))
+                {
+                    if (!bookCategories.Contains(cat.ID))
+                    {
+                        bookToUpdate.BookCategories.Add(
+                            new BookCategory
+                            {
+                                BookID = bookToUpdate.ID,
+                                CategoryID = cat.ID
+                            });
+                    }
+                }
+                else
+                {
+                    if (bookCategories.Contains(cat.ID))
+                    {
+                        BookCategory bookToRemove = bookToUpdate
+                            .BookCategories
+                            .SingleOrDefault(i => i.CategoryID == cat.ID);
                         context.Remove(bookToRemove);
                     }
                 }
