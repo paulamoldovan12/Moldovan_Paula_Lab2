@@ -30,6 +30,7 @@ namespace Moldovan_Paula_Lab2.Pages.Books
 
             BookD.Books = await _context.Book
                   .Include(b => b.Publisher)
+                  .Include(b => b.Author)
                   .Include(b => b.BookCategories)
                   .ThenInclude(b => b.Category)
                   .AsNoTracking()
