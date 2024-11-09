@@ -29,7 +29,7 @@ namespace Moldovan_Paula_Lab2.Pages.Borrowings
             {
                 return NotFound();
             }
-
+            /*
             Borrowing = await _context.Borrowing
                 .Include(b => b.Book)
                     .ThenInclude(b => b.Author)
@@ -54,7 +54,8 @@ namespace Moldovan_Paula_Lab2.Pages.Borrowings
             ViewData["MemberID"] = new SelectList(_context.Member, "ID", "FullName");
 
             return Page();
-            /*
+            */
+            
             var borrowing =  await _context.Borrowing.FirstOrDefaultAsync(m => m.ID == id);
             if (borrowing == null)
             {
@@ -64,7 +65,6 @@ namespace Moldovan_Paula_Lab2.Pages.Borrowings
             ViewData["BookID"] = new SelectList(_context.Book, "ID", "ID");
             ViewData["MemberID"] = new SelectList(_context.Member, "ID", "ID");
             return Page();
-            */
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
