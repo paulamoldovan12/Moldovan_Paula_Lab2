@@ -9,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using Moldovan_Paula_Lab2.Data;
 using Moldovan_Paula_Lab2.Models;
 using Microsoft.Extensions.ObjectPool;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Moldovan_Paula_Lab2.Pages.Books
 {
+    [Authorize(Roles = "Admin")]
     public class EditModel : BookCategoriesPageModel
     {
         private readonly Moldovan_Paula_Lab2.Data.Moldovan_Paula_Lab2Context _context;
